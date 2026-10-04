@@ -1,0 +1,28 @@
+[Unit]
+Description=Custom ASUS laptop fan curve
+Documentation=https://github.com/Keyitdev/asus-fan-control-ec
+After=multi-user.target
+ConditionPathExists=/etc/asus-custom-fan.conf
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /usr/local/libexec/asus-custom-fan/fan_curve.py --config /etc/asus-custom-fan.conf
+ExecStopPost=-/usr/local/libexec/asus-custom-fan/asus-fan-control-ec setp -1
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=8
+
+# The EC utility needs raw I/O privileges for ports 0x25C/0x25D.
+CapabilityBoundingSet=CAP_SYS_RAWIO
+AmbientCapabilities=CAP_SYS_RAWIO
+NoNewPrivileges=yes
+ProtectHome=yes
+ProtectSystem=strict
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
